@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Master Roy</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4B4DED">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Master Roy">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--bg:#EEF0FF;--sky:#2BA8F5;--card:#fff;--ink:#23214A;--pri:#4B4DED;--priD:#3638B8;--ok:#2FBF8F;--okD:#1E9970;--no:#FF6B6B;--noD:#D44A4A;--sun:#FFC94D;--soft:#D9DCFF;--mute:#6B6A94;--okBg:#DFF6EE;--noBg:#FFE3E3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17163A;--card:#24225A;--ink:#F2F1FF;--soft:#3A3880;--mute:#A9A8D6;--okBg:#1B4A44;--noBg:#5A2A3C;--pri:#7476FF;--sky:#1A6FD6}}
+:root[data-theme="dark"]{--sky:#1A6FD6;--bg:#17163A;--card:#24225A;--ink:#F2F1FF;--soft:#3A3880;--mute:#A9A8D6;--okBg:#1B4A44;--noBg:#5A2A3C;--pri:#7476FF}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{font-family:"Baloo 2","Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:radial-gradient(circle at 12% 8%,rgba(255,201,77,.28),transparent 42%),radial-gradient(circle at 92% 92%,rgba(75,77,237,.22),transparent 45%),var(--bg);background-attachment:fixed;display:flex;justify-content:center}
+main{width:100%;max-width:520px;padding:16px 18px 28px;display:flex;flex-direction:column;align-items:center}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+:focus-visible{outline:4px solid var(--sun);outline-offset:3px}
+#wrap{width:min(62vw,230px);transition:width .6s cubic-bezier(.5,0,.2,1);margin-top:14px}
+#wrap.play{width:104px;margin-top:0}
+#mr{width:100%;display:block;overflow:visible;transform-origin:50% 95%;filter:drop-shadow(0 8px 0 rgba(35,33,74,.12))}
+#mr .body{fill:var(--mc,var(--sun));stroke:var(--mc,var(--sun));stroke-width:16;stroke-linejoin:round;transition:fill .25s,stroke .25s}
+#mr .ink{fill:var(--ink)}
+#mr .line{fill:none;stroke:var(--ink);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+#mr .cheek{fill:#FF8FA3;opacity:.55}
+#mr .e2{transform-box:fill-box;transform-origin:center}
+#mr .hEyes,#mr .mHappy,#mr .mAngry,#mr .spark{display:none}
+#mr.happy .eyes,#mr.angry .hEyes{display:none}
+#mr.happy .hEyes,#mr.happy .mHappy,#mr.happy .spark,#mr.angry .mAngry{display:inline}
+#mr{--ink:#1a1840}
+#mr .out{fill:var(--ink);stroke:var(--ink);stroke-width:23;stroke-linejoin:round}
+#mr .sc{fill:#fff;stroke:var(--ink);stroke-width:3}
+#mr .brow{fill:var(--ink);transform-box:fill-box;transform-origin:center;transition:transform .25s}
+#mr.angry .bl{transform:rotate(20deg) translateY(4px)}
+#mr.angry .br{transform:rotate(-20deg) translateY(4px)}
+#mr.happy .brow{transform:translateY(-6px)}
+.over{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(8,40,110,.62);backdrop-filter:blur(3px)}
+.pop{background:var(--card);color:var(--ink);border-radius:32px;padding:30px 22px;text-align:center;width:min(100%,440px);box-shadow:0 8px 0 var(--soft);animation:boom .5s cubic-bezier(.3,1.6,.5,1)}
+.pop h1{font-size:clamp(2.3rem,11vw,3.3rem);margin:6px 0 8px}
+@keyframes boom{from{scale:.5;opacity:0}to{scale:1;opacity:1}}
+.ld{max-width:320px;margin:22px auto 14px}
+.ld i{animation:fill 6s linear forwards;transition:none}
+@keyframes fill{to{width:100%}}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.lv{aspect-ratio:1;border-radius:22px;background:var(--card);color:var(--ink);box-shadow:0 5px 0 var(--soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:800;padding:6px;line-height:1.05;transition:transform .08s,box-shadow .08s}
+.lv b{font-size:1.9rem;color:var(--pri)}
+.lv small{font-size:.78rem;color:var(--mute);font-weight:700}
+.lv.on{border:3px solid var(--pri)}
+.lv.done b{color:var(--ok)}
+.lv:disabled{opacity:.6;cursor:not-allowed}
+.lv:not(:disabled):active{transform:translateY(3px);box-shadow:0 1px 0 var(--soft)}
+.back{background:none;color:var(--mute);font-weight:800;margin-top:16px;font-size:1.05rem;padding:6px 12px}
+.lang{align-self:flex-end;display:flex;gap:4px;background:var(--card);border-radius:99px;padding:3px;box-shadow:0 3px 0 var(--soft)}
+.lang button{background:none;color:var(--mute);font-weight:800;padding:2px 12px;border-radius:99px}
+.lang button.on{background:var(--pri);color:#fff}
+.pathbox{max-height:62vh;overflow-y:auto;padding:6px 0 18px;-webkit-overflow-scrolling:touch}
+.path{display:flex;flex-direction:column;align-items:center;gap:14px}
+.row{display:flex;flex-direction:column;align-items:center;gap:2px}
+.nd{width:88px;height:88px;border-radius:50%;background:var(--pri);color:#fff;font-size:2rem;font-weight:800;box-shadow:0 7px 0 var(--priD);display:grid;place-items:center;transition:transform .08s,box-shadow .08s}
+.nd.done{background:var(--ok);box-shadow:0 7px 0 var(--okD)}
+.nd:not(:disabled):active{transform:translateY(5px);box-shadow:0 2px 0 var(--priD)}
+.nd:disabled{opacity:.4;cursor:not-allowed}
+.nd:disabled span{opacity:.6}
+.row small{font-size:.9rem;min-height:1.2em}
+.top2{align-self:flex-end;display:flex;gap:8px;align-items:center}
+#snd{background:var(--card);border-radius:99px;width:36px;height:36px;box-shadow:0 3px 0 var(--soft);font-size:1.05rem}
+#mr.happy .mSmile,#mr.angry .mSmile{display:none}
+#mr.happy .mHappy{fill:var(--ink);stroke:var(--ink)}
+#mr.angry .body{fill:var(--no);stroke:var(--no)}
+#mr.angry .cheek{opacity:.2}
+#mr .spark text{font-size:24px;fill:var(--pri);animation:pop .7s ease-out both}
+#mr .spark text:nth-child(2){animation-delay:.12s;fill:var(--ok)}
+#mr .spark text:nth-child(3){animation-delay:.24s;fill:var(--no)}
+#mr.idle{animation:nod 9s ease-in-out infinite,shake 9s ease-in-out infinite}
+#mr.idle .e2{animation:wink 9s ease-in-out infinite}
+#mr.happy{animation:hop .7s ease-out}
+#mr.angry{animation:grr .55s ease-in-out}
+@keyframes wink{0%,4%{scale:1}8%{scale:1 .1}14%{scale:1}18%{scale:1 .1}24%,100%{scale:1}}
+@keyframes shake{0%,33%{rotate:0deg}38%{rotate:-10deg}43%{rotate:10deg}48%{rotate:-10deg}53%{rotate:10deg}58%{rotate:-5deg}63%,100%{rotate:0deg}}
+@keyframes nod{0%,66%{translate:0 0}70%{translate:0 12px}74%{translate:0 0}78%{translate:0 12px}82%{translate:0 0}86%{translate:0 12px}90%,100%{translate:0 0}}
+@keyframes hop{0%{translate:0 0}30%{translate:0 -22px;scale:1.06}60%{translate:0 0;scale:.96}100%{translate:0 0;scale:1}}
+@keyframes grr{0%,100%{rotate:0deg}15%{rotate:-8deg}35%{rotate:8deg}55%{rotate:-6deg}75%{rotate:6deg}}
+@keyframes pop{0%{opacity:0;translate:0 10px}40%{opacity:1}100%{opacity:1;translate:0 -4px}}
+.screen{width:100%;margin-top:18px;animation:in .4s ease-out}
+@keyframes in{from{opacity:0}to{opacity:1}}
+[hidden]{display:none!important}
+#home{text-align:center}
+.tag{display:inline-block;background:var(--soft);color:var(--pri);font-weight:800;padding:2px 16px;border-radius:99px;font-size:1.05rem}
+h1{font-size:clamp(1.9rem,8vw,2.5rem);line-height:1.08;margin:12px 0 10px;font-weight:800}
+.sub{color:var(--mute);font-size:1.15rem;line-height:1.3;max-width:30ch;margin:0 auto 26px}
+.big{background:var(--pri);color:#fff;font-weight:800;font-size:1.4rem;padding:14px 46px;border-radius:20px;box-shadow:0 6px 0 var(--priD);transition:transform .08s,box-shadow .08s}
+.big:active{transform:translateY(5px);box-shadow:0 1px 0 var(--priD)}
+.big.alt{color:#fff;background:var(--ok);box-shadow:0 6px 0 var(--okD)}
+.big.alt:active{box-shadow:0 1px 0 var(--okD)}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.bar{flex:1;height:14px;background:var(--soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);border-radius:99px;transition:width .4s}
+.pill{color:var(--ink);font-weight:800;background:var(--card);padding:2px 14px;border-radius:99px;box-shadow:0 3px 0 var(--soft);white-space:nowrap}
+.count{color:var(--mute);font-weight:700;margin-bottom:6px}
+.card{color:var(--ink);background:var(--card);border-radius:26px;padding:20px 18px;box-shadow:0 6px 0 var(--soft)}
+.q{font-size:1.45rem;font-weight:800;line-height:1.2;margin-bottom:16px}
+.ans{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;width:100%;min-height:58px;padding:10px 14px;background:var(--card);border:3px solid var(--soft);border-radius:18px;font-weight:700;font-size:1.08rem;line-height:1.2;box-shadow:0 4px 0 var(--soft);transition:transform .08s,box-shadow .08s,background .2s}
+.opt b{flex:none;width:32px;height:32px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:1rem}
+.opt:not(:disabled):active{transform:translateY(3px);box-shadow:0 1px 0 var(--soft)}
+.opt:disabled{cursor:default}
+.opt.ok{background:var(--okBg);border-color:var(--ok);box-shadow:0 4px 0 var(--okD)}
+.opt.ok b{background:var(--ok);color:#fff}
+.opt.no{background:var(--noBg);border-color:var(--no);box-shadow:0 4px 0 var(--noD)}
+.opt.no b{background:var(--no);color:#fff}
+.opt.dim{opacity:.55}
+#fb{margin-top:16px;border-radius:20px;padding:14px 16px}
+#fb.ok{background:var(--okBg)}#fb.no{background:var(--noBg)}
+#fb h2{font-size:1.35rem;font-weight:800}
+#fb.ok h2{color:var(--okD)}#fb.no h2{color:var(--noD)}
+#fb p{font-size:1.05rem;line-height:1.3;margin:4px 0 12px}
+#fb .big{width:100%;padding:11px;font-size:1.2rem}
+#end{text-align:center}
+.stars{font-size:3rem;letter-spacing:6px;margin:6px 0 2px}
+.stars s{text-decoration:none;opacity:.22;filter:grayscale(1)}
+.score{font-size:1.3rem;font-weight:700;color:var(--mute);margin-bottom:22px}
+.next{margin-top:18px;color:var(--mute);font-weight:700}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div class="top2"><button id="snd" aria-label="Sound">🔊</button><div class="lang"><button data-l="en">EN</button><button data-l="fr">FR</button></div></div>
+<div id="wrap">
+<svg id="mr" class="idle" viewBox="0 0 200 180" role="img" aria-label="Master Roy">
+<polygon class="body" points="100,14 188,162 12,162"/>
+<circle class="cheek" cx="64" cy="134" r="8"/><circle class="cheek" cx="136" cy="134" r="8"/>
+<g class="eyes"><ellipse class="ink" cx="84" cy="112" rx="7" ry="9"/><ellipse class="ink e2" cx="116" cy="112" rx="7" ry="9"/></g>
+<g class="hEyes"><path class="line" d="M76 116q8-12 16 0"/><path class="line" d="M108 116q8-12 16 0"/></g>
+
+<path class="line mSmile" d="M88 133q12 12 24 0"/>
+<path class="line mHappy" d="M86 128q14 24 28 0z"/>
+<path class="line mAngry" d="M88 144q12-13 24 0"/>
+<g class="spark"><text x="6" y="40">✦</text><text x="170" y="30">✦</text><text x="184" y="100">✦</text></g>
+</svg>
+</div>
+
+<section id="load" class="screen" style="text-align:center">
+<h1>Master Roy</h1>
+<div class="bar ld"><i></i></div>
+<p class="sub" id="ldT">Master Roy se réveille…</p>
+</section>
+
+<section id="map" class="screen" hidden>
+<h1 id="mapT" style="text-align:center">Choose your level</h1>
+<div class="pathbox"><div class="path" id="grid"></div></div>
+</section>
+
+<section id="home" class="screen" hidden>
+<span class="tag" id="hTag">Étape 1 sur 20</span>
+<h1 id="hT">Le respect, ça commence ici</h1>
+<p class="sub" id="hS">30 questions pour savoir quoi faire, et quoi ne pas faire.</p>
+<button class="big" id="go">Commencer</button><br><button class="back" id="hBack">Tous les niveaux</button>
+</section>
+
+<section id="game" class="screen" hidden>
+<div class="top"><div class="bar"><i id="prog"></i></div><div class="pill">⭐ <span id="sc">0</span></div></div>
+<div class="count" id="cnt"></div>
+<div class="card">
+<div class="q" id="q"></div>
+<div class="ans" id="ans"></div>
+<div id="fb" hidden><h2 id="fbT"></h2><p id="fbP"></p><button class="big alt" id="nx">Suivant</button></div>
+</div>
+</section>
+
+<div id="end" class="over" hidden><div class="pop">
+<div class="stars" id="stars"></div>
+<h1 id="eT"></h1>
+<div class="score" id="eS"></div>
+<button class="big" id="again">Niveau suivant</button><br><button class="back" id="toMap">Retour aux niveaux</button>
+</div></div>
+</main>
+
+<script>
+var Q=[
+["Pourquoi doit-on se brosser les dents le matin ?","Pour enlever les microbes et avoir l’haleine fraîche","Pour que les dents grandissent plus vite","Pour faire plaisir au dentifrice","Pendant la nuit, les microbes se multiplient dans la bouche."],
+["Tu reçois un cadeau. Que dis-tu ?","Merci !","Rien, je l’ouvre vite","C’est tout ?","On remercie toujours la personne qui nous fait plaisir."],
+["Quelqu’un est en train de parler. Que fais-tu ?","J’attends qu’il ait fini pour parler","Je parle plus fort que lui","Je pars en courant","Écouter, c’est respecter l’autre."],
+["Tu veux le jouet d’un copain. Que fais-tu ?","Je lui demande gentiment de me le prêter","Je le lui arrache des mains","Je le cache dans mon sac","Ce jouet est à lui : on demande avant de prendre."],
+["Tu arrives à l’école le matin. Que dis-tu ?","Bonjour !","Rien du tout","Où est ma place ?","Dire bonjour, c’est montrer qu’on est content de voir les autres."],
+["Pourquoi se laver les mains avant de manger ?","Pour enlever les microbes","Pour que la nourriture soit plus froide","Pour jouer avec l’eau","Les mains sales peuvent donner mal au ventre."],
+["Tu as fait tomber un copain sans le faire exprès. Que fais-tu ?","Je m’excuse et je l’aide à se relever","Je fais comme si de rien n’était","Je ris très fort","Même sans le vouloir, on s’excuse et on aide."],
+["Pourquoi ne crie-t-on pas en classe ?","Pour que tout le monde puisse écouter et travailler","Parce que ça use la voix","Parce que le tableau a peur","Le bruit empêche les autres de se concentrer."],
+["Quel est le mot magique quand on demande quelque chose ?","S’il te plaît","Tout de suite","Donne !","Avec « s’il te plaît », on demande avec gentillesse."],
+["Un copain est triste. Que fais-tu ?","Je viens vers lui et je le console","Je me moque de lui","Je l’ignore","Un petit mot gentil peut faire beaucoup de bien."],
+["Tu as fini de jouer. Que fais-tu ?","Je range mes jouets","Je les laisse par terre","Je les jette sous le lit","Ranger, c’est respecter la maison et ceux qui y vivent."],
+["À table, comment mange-t-on ?","Doucement, la bouche fermée","La bouche pleine en parlant","En jouant avec la nourriture","Manger proprement, c’est agréable pour tout le monde."],
+["Un copain est très différent de toi. Que fais-tu ?","Je le respecte, chacun est différent","Je me moque de lui","Je ne lui parle jamais","Nos différences rendent le monde plus beau."],
+["Tu trouves un objet qui n’est pas à toi. Que fais-tu ?","Je le donne à un adulte pour le rendre","Je le garde pour moi","Je le jette","Quelqu’un le cherche sûrement et sera content de le retrouver."],
+["Pourquoi est-il important de dire la vérité ?","Pour que les autres puissent avoir confiance en nous","Pour que les autres soient jaloux","Ce n’est pas important","Quand on ment, plus personne ne nous croit."],
+["Il y a une file pour monter sur le toboggan. Que fais-tu ?","Je me mets derrière et j’attends mon tour","Je passe devant tout le monde","Je pousse les autres","Chacun son tour, c’est juste pour tous."],
+["Pourquoi ne faut-il pas couper la parole ?","Parce que ce n’est pas poli, chacun doit pouvoir finir","Parce que ça fait tousser","Parce que c’est interdit aux enfants","Couper la parole, c’est dire à l’autre qu’il ne compte pas."],
+["Tu perds à un jeu. Que fais-tu ?","Je félicite le gagnant","Je renverse le jeu","Je boude toute la journée","Savoir perdre, c’est aussi une façon de gagner."],
+["Pourquoi ne frappe-t-on jamais les autres ?","Parce que ça fait mal et ça blesse","Parce que ça fait de la poussière","Parce que c’est fatigant","On règle les problèmes avec des mots, pas avec les mains."],
+["La porte de la chambre de ta sœur est fermée. Que fais-tu ?","Je frappe et j’attends qu’elle réponde","J’entre directement","Je crie derrière la porte","Chacun a besoin d’un espace à soi."],
+["Maman prépare le repas. Comment peux-tu l’aider ?","Je mets la table","Je cours partout","Je regarde la télé","Aider à la maison, c’est dire merci avec des gestes."],
+["Dans le bus, une personne âgée est debout. Que fais-tu ?","Je lui propose ma place","Je fais semblant de dormir","Je prends sa place aussi","Se tenir debout est fatigant pour les personnes âgées."],
+["Pourquoi ne jette-t-on pas ses papiers par terre ?","Pour garder la nature et la rue propres","Pour que les poubelles soient jalouses","Parce que les papiers sont lourds","Respecter la nature, c’est respecter tout le monde."],
+["Pourquoi doit-on se coucher à une heure raisonnable ?","Pour que le corps se repose et grandisse bien","Pour que la lune soit contente","Pour rêver de monstres","Le sommeil donne de l’énergie pour le lendemain."],
+["Des enfants se moquent d’un copain. Que fais-tu ?","Je dis stop et je vais avec le copain","Je ris avec eux","Je regarde sans rien dire","Défendre quelqu’un, c’est du vrai courage."],
+["Tu as fait une bêtise. Que fais-tu ?","Je le dis et je répare si je peux","Je mens pour ne pas être puni","Je dis que c’est le chat","Tout le monde fait des erreurs, l’important est de les assumer."],
+["Tu quittes tes amis pour rentrer chez toi. Que dis-tu ?","Au revoir, à bientôt !","Rien, je pars","Enfin je m’en vais !","Un petit au revoir laisse une belle dernière impression."],
+["Pourquoi parle-t-on doucement à la bibliothèque ?","Pour ne pas déranger ceux qui lisent","Parce que les livres dorment","Parce qu’il y a des fantômes","Le calme aide chacun à bien lire."],
+["Un nouvel élève arrive dans ta classe. Que fais-tu ?","Je l’invite à jouer avec nous","Je ne lui parle pas","Je me moque de son accent","Être accueilli, ça donne confiance pour la suite."],
+["Pourquoi est-il important de respecter tout le monde ?","Parce que chacun mérite d’être traité avec gentillesse","Parce que c’est la règle du jeu","Pour avoir des bonbons","Le respect rend la vie plus douce pour tous."]
+];
+var S=[Q,[
+["Un camarade n’a pas compris la leçon. Que fais-tu ?","Je lui explique doucement si je peux","Je me moque de lui","Je lui dis que c’est facile","Chacun apprend à son rythme."],
+["Que veut dire « s’excuser sincèrement » ?","Dire pardon et le penser vraiment","Dire pardon en rigolant","Dire pardon pour avoir la paix","Un vrai pardon montre qu’on regrette."],
+["Tu n’es pas d’accord avec un ami. Que fais-tu ?","J’explique mon idée calmement","Je crie plus fort que lui","Je ne lui parle plus","On peut penser différemment sans se fâcher."],
+["Pourquoi respecte-t-on les règles d’un jeu ?","Pour que le jeu soit juste pour tous","Pour embêter les autres","Pour gagner à tout prix","Sans règles, le jeu n’est plus amusant."],
+["Quelqu’un te fait un compliment. Que réponds-tu ?","Merci, c’est gentil !","Ce n’est pas vrai !","Je pars sans rien dire","Accepter un compliment, c’est respecter celui qui le fait."],
+["Tu bouscules quelqu’un dans un couloir. Que fais-tu ?","Je dis pardon et je continue doucement","Je cours plus vite","Je l’accuse","Un petit pardon évite bien des disputes."],
+["Pourquoi ne touche-t-on pas aux affaires des autres sans demander ?","Parce qu’elles leur appartiennent","Parce qu’elles sont sales","Parce que c’est ennuyeux","Demander, c’est respecter ce qui est à l’autre."],
+["Que fais-tu quand la maîtresse explique ?","J’écoute et je lève la main pour parler","Je discute avec mon voisin","Je dessine sur la table","Écouter est la première façon d’apprendre."],
+["Un copain te confie un secret. Que fais-tu ?","Je le garde pour moi","Je le raconte à la classe","Je l’écris sur un mur","Garder un secret, c’est mériter la confiance."],
+["Pourquoi respecte-t-on les cultures, langues et religions différentes ?","Parce que tous les humains ont la même valeur","Parce qu’on y est obligé","Parce que c’est à la mode","Nous sommes tous différents et tous égaux."]
+],[
+["Pourquoi trie-t-on les déchets ?","Pour recycler et protéger la planète","Pour que la poubelle soit plus lourde","Pour faire un jeu","Le recyclage donne une seconde vie aux objets."],
+["Pourquoi éteint-on la lumière en quittant une pièce ?","Pour économiser l’énergie","Pour que la pièce dorme","Pour fatiguer l’interrupteur","Moins d’énergie gaspillée, c’est mieux pour la planète."],
+["Pourquoi ferme-t-on le robinet pendant le brossage des dents ?","Pour ne pas gaspiller l’eau","Pour que les dents soient sèches","Pour faire moins de bruit","L’eau potable est précieuse."],
+["Que fais-tu avant de traverser la rue ?","Je regarde des deux côtés","Je cours les yeux fermés","Je suis mon ballon","Regarder, c’est se protéger."],
+["Un inconnu te propose des bonbons pour le suivre. Que fais-tu ?","Je refuse et j’en parle à un adulte","Je le suis","Je prends et je pars seul","Un adulte de confiance doit toujours savoir où tu es."],
+["Pourquoi attache-t-on sa ceinture en voiture ?","Pour être protégé si la voiture freine fort","Pour être bien coiffé","Pour jouer au pilote","La ceinture sauve des vies."],
+["Tu joues sur une tablette depuis longtemps. Que fais-tu ?","Je fais une pause et je vais dehors","Je continue sans m’arrêter","Je regarde l’écran de plus près","Trop d’écran fatigue les yeux et le cerveau."],
+["Dans une équipe, que veut dire « un pour tous, tous pour un » ?","Chacun aide les autres","Le plus fort décide","Chacun joue seul","Ensemble, on réussit mieux."],
+["Un voisin fait du bruit la nuit. Que fais-tu ?","Je lui demande gentiment de faire moins de bruit","Je fais encore plus de bruit","Je lui jette un objet","Parler calmement règle beaucoup de problèmes."],
+["Pourquoi respecte-t-on les animaux ?","Parce que ce sont des êtres vivants qui ressentent","Parce qu’ils ne parlent pas","Parce qu’ils sont drôles","Les animaux méritent d’être protégés."]
+],[
+["Qu’est-ce que l’empathie ?","Comprendre ce que ressent l’autre","Gagner contre l’autre","Ne jamais pleurer","Se mettre à la place de l’autre aide à être gentil."],
+["Tu es très en colère. Que fais-tu ?","Je respire profondément puis j’en parle","Je casse un objet","Je frappe quelqu’un","Calmer son corps aide à bien parler."],
+["Sur Internet, on te demande ton adresse. Que fais-tu ?","Je ne réponds pas et j’en parle à un adulte","Je la donne","Je donne celle d’un ami","Les infos privées ne se donnent pas en ligne."],
+["Que veut dire « harcèlement » ?","Faire du mal à quelqu’un de façon répétée","Se disputer une fois","Jouer ensemble","C’est grave : il faut en parler à un adulte."],
+["Tu vois quelqu’un se faire harceler. Que fais-tu ?","J’en parle à un adulte de confiance","Je filme pour rigoler","Je m’en vais en silence","Demander de l’aide, c’est courageux."],
+["Ton ami a fait une erreur. Comment réagis-tu ?","Je l’encourage à réessayer","Je lui dis que c’est nul","Je le dis à tout le monde","Se tromper fait partie de l’apprentissage."],
+["Pourquoi tient-on ses promesses ?","Pour que les autres puissent compter sur nous","Pour avoir une récompense","Ce n’est pas obligatoire","Une promesse tenue crée la confiance."],
+["Tu as cassé un objet chez un ami. Que fais-tu ?","Je le dis tout de suite et je propose de réparer","Je cache les morceaux","Je dis que c’est son chien","Être responsable, c’est assumer ses actes."],
+["Pourquoi ne faut-il pas écrire de méchants messages en ligne ?","Les mots blessent même sur un écran","L’écran est fragile","On n’a pas le droit d’écrire","Derrière l’écran, il y a une vraie personne."],
+["Qu’est-ce que le courage ?","Faire ce qui est juste même avec peur","N’avoir peur de rien","Gagner tous les jeux","Le courage, c’est agir malgré la peur."]
+],[
+["Qu’est-ce qu’un droit de l’enfant ?","Ce dont chaque enfant a besoin, comme apprendre ou être soigné","Un jouet gratuit","Une punition","Les enfants du monde entier ont des droits."],
+["Que veut dire « solidarité » ?","S’entraider quand quelqu’un a un problème","Chacun pour soi","Être le meilleur","Ensemble, on est plus forts."],
+["Pourquoi existe-t-il des lois ?","Pour protéger tout le monde et vivre en paix","Pour embêter les gens","Pour faire joli","Les lois sont les règles de la société."],
+["Qu’est-ce que l’égalité ?","Chacun a les mêmes droits","Tout le monde est identique","Le plus fort a raison","Égaux en droits, différents et uniques."],
+["Que veut dire « respecter l’environnement » ?","Prendre soin de la nature pour demain","Couper tous les arbres","Jeter ses déchets partout","La Terre est notre maison commune."],
+["Un camarade est seul à la récréation. Que fais-tu ?","Je l’invite à jouer avec nous","Je l’ignore","Je me moque","Un geste simple peut changer sa journée."],
+["Pourquoi aide-t-on les personnes en situation de handicap ?","Chacun mérite sa place, avec les mêmes droits","Par pitié","Pour être payé","Ils ont les mêmes droits que nous."],
+["Quelle est la meilleure façon de régler un conflit ?","Parler calmement et écouter l’autre","Se battre","Faire semblant d’oublier","Dialoguer, c’est la solution des grands."],
+["Que veut dire « ma liberté s’arrête où commence celle des autres » ?","Ma liberté ne doit pas gêner les autres","Je ne suis pas libre","C’est interdit","Vivre libres, mais ensemble."],
+["Que retiens-tu du respect ?","Respecter les autres, la nature et soi-même","Faire ce qu’on veut","Gagner tout le temps","Bravo, tu es un champion du respect !"]
+],[
+['Pourquoi mange-t-on des fruits et des légumes ?','Ils donnent des vitamines pour grandir en forme','Ils sont toujours sucrés','Ils remplacent le sommeil','Une assiette variée aide le corps.'],
+['Combien de fois par jour se brosse-t-on les dents ?','Au moins deux fois','Une fois par semaine','Jamais si on mange peu','Matin et soir, les dents restent en bonne santé.'],
+['Pourquoi boit-on de l’eau ?','Le corps en a besoin pour bien fonctionner','Pour avoir faim','Pour grandir plus vite','L’eau est la meilleure boisson.'],
+['Tu es malade. Que fais-tu ?','Je me repose et je préviens un adulte','Je cache que je suis malade','Je joue sous la pluie','Se reposer aide à guérir et protège les autres.'],
+['Pourquoi tousse-t-on dans son coude ?','Pour ne pas envoyer de microbes aux autres','Pour avoir plus chaud','Pour faire du bruit','Protéger les autres, c’est du respect.']
+],[
+['Ton groupe doit faire un exposé. Que fais-tu ?','Je prends ma part du travail','Je laisse les autres faire','Je critique tout','Chacun donne un coup de main.'],
+['Un camarade a une idée différente de la tienne. Que fais-tu ?','Je l’écoute et on compare les idées','Je dis que c’est nul','Je quitte le groupe','Les meilleures idées naissent à plusieurs.'],
+['Pourquoi arriver à l’heure ?','Pour respecter le temps des autres','Pour être le premier','Pour un autocollant','Être en retard fait perdre du temps à tous.'],
+['Tu gagnes avec ton équipe. Comment réagis-tu ?','Je félicite aussi les adversaires','Je me moque d’eux','Je dis que j’ai tout fait seul','Gagner avec humilité, c’est respecter.'],
+['Un coéquipier se trompe. Que fais-tu ?','Je l’aide à corriger sans me moquer','Je l’accuse devant tous','Je ne joue plus avec lui','Une équipe apprend de ses erreurs.']
+],[
+['Tu reçois de l’argent de poche. Que peux-tu faire ?','En mettre un peu de côté','Tout dépenser tout de suite','Le perdre exprès','Économiser permet d’acheter plus tard.'],
+['Pourquoi ne faut-il pas voler, même un petit objet ?','Ça prive quelqu’un de ce qui est à lui','On se fait gronder','C’est lourd','Voler casse la confiance.'],
+['Un ami n’a pas de goûter. Que fais-tu ?','Je partage le mien','Je le mange devant lui','Je me moque','Partager fait plaisir aux deux.'],
+['Pourquoi réparer un objet plutôt que le jeter ?','Pour gaspiller moins','Parce que c’est amusant','Parce qu’il est cassé','Réparer protège la planète.'],
+['À quoi servent les impôts ?','À payer l’école, les routes et les hôpitaux','À acheter des bonbons','À rien','Chacun contribue pour tous.']
+],[
+['Pourquoi les abeilles sont-elles importantes ?','Elles aident les plantes à faire des fruits','Elles fabriquent les nuages','Elles font la pluie','Sans abeilles, beaucoup de fruits disparaîtraient.'],
+['Que se passe-t-il si on coupe trop d’arbres ?','Moins d’air pur et moins d’animaux','Plus d’oxygène','Rien du tout','Les forêts abritent la vie.'],
+['Pourquoi le plastique est-il un problème dans la mer ?','Il blesse les animaux et reste très longtemps','Il rend l’eau sucrée','Il fait des vagues','Un sac plastique dure des centaines d’années.'],
+['Que peut faire un enfant pour la planète ?','Trier, économiser l’eau, marcher','Rien, c’est trop petit','Tout jeter dans la rue','Les petits gestes comptent.'],
+['Pourquoi observe-t-on les animaux sans les déranger ?','Pour ne pas les effrayer ni les blesser','Pour les attraper','Pour leur lancer des cailloux','Chaque animal a sa place.']
+],[
+['Que veut dire « écouter activement » ?','Regarder l’autre et comprendre ce qu’il dit','Penser à autre chose','Attendre pour répondre','Montrer qu’on s’intéresse, c’est respecter.'],
+['Tu es fâché contre un ami. Que dis-tu ?','« Je suis fâché parce que… »','« Tu es nul ! »','Rien, mais je boude','Dire ce qu’on ressent évite les disputes.'],
+['Pourquoi dit-on « s’il vous plaît » à un adulte ?','Par politesse et par respect','Pour avoir des cadeaux','Parce qu’on a peur','La politesse ouvre bien des portes.'],
+['Comment demander le silence poliment ?','« Peux-tu faire moins de bruit, s’il te plaît ? »','« Ferme-la ! »','« Tais-toi, imbécile ! »','Un ton gentil est mieux accepté.'],
+['Pourquoi ne répète-t-on pas les rumeurs ?','Elles peuvent faire du mal et être fausses','Elles sont ennuyeuses','Elles sont longues','Une rumeur peut blesser quelqu’un.']
+],[
+['Qu’est-ce que voter ?','Choisir ensemble qui décide pour tous','Choisir son dessert','Jouer à un jeu','Voter, c’est participer.'],
+['Pourquoi respecte-t-on les panneaux de la route ?','Pour la sécurité de tous','Pour décorer la rue','Pour faire plaisir à la police','Les règles de la route sauvent des vies.'],
+['Que représente un drapeau ?','Un pays ou un groupe de personnes','Un jouet','La météo','On respecte aussi les symboles des autres.'],
+['Pourquoi a-t-on besoin des pompiers et des médecins ?','Ils aident et protègent les autres','Ils vendent des glaces','Ils font du sport','Respecter leur travail, c’est dire merci.'],
+['Pourquoi paie-t-on son billet dans les transports ?','Pour financer le service pour tous','Pour avoir un ticket','Parce que c’est drôle','Chacun participe aux services communs.']
+],[
+['Qu’est-ce qu’un mot de passe solide ?','Long, avec lettres, chiffres et symboles','Ton prénom','1234','Un bon mot de passe protège ton compte.'],
+['Un inconnu t’écrit en ligne. Que fais-tu ?','Je ne réponds pas et j’en parle à un adulte','Je lui donne mon nom','Je lui envoie une photo','Les inconnus en ligne ne sont pas des amis.'],
+['Pourquoi demande-t-on avant de publier la photo d’un ami ?','Pour respecter son image et son choix','Pour gagner des likes','Ce n’est pas utile','Chacun décide de montrer son image.'],
+['Tu vois quelque chose de choquant en ligne. Que fais-tu ?','Je ferme et j’en parle à un adulte','Je le partage','Je le commente','Un adulte peut t’aider et signaler.'],
+['Combien de temps peut-on rester sur un écran ?','Peu, avec des pauses régulières','Toute la journée','Toute la nuit','Le corps a besoin de bouger et de dormir.']
+],[
+['Tu rates un exercice. Que te dis-tu ?','Je peux réessayer et m’améliorer','Je suis nul','Je n’essaierai plus','L’erreur fait grandir.'],
+['Tu as peur de parler en classe. Que fais-tu ?','Je respire et j’essaie petit à petit','Je ne parle plus jamais','Je quitte la classe','On devient courageux en essayant.'],
+['Pourquoi ne pas se comparer sans cesse aux autres ?','Chacun est unique avec ses qualités','C’est interdit','On perd toujours','Tu avances à ton rythme.'],
+['Quelqu’un se moque de toi. Que fais-tu ?','Je dis stop et j’en parle à un adulte','Je me moque en retour','Je garde tout pour moi','On n’a pas à subir les moqueries.'],
+['Dire « non » à un copain qui veut faire une bêtise, c’est…','Du courage','De la peur','De la trahison','Savoir dire non nous protège.']
+],[
+['Tu lis une info surprenante. Que fais-tu ?','Je vérifie avec une source fiable','Je la partage tout de suite','Je la crois vite','Toutes les infos ne sont pas vraies.'],
+['Qu’est-ce qu’une fausse information ?','Une info inventée ou trompeuse','Une vraie nouvelle','Un jeu','Elle peut faire peur ou blesser.'],
+['Pourquoi les publicités veulent-elles te faire acheter ?','Pour vendre des produits','Pour te faire un cadeau','Pour t’aider à dormir','Garde ton esprit critique.'],
+['Pourquoi cite-t-on ses sources ?','Pour dire d’où vient l’info','Pour faire long','Pour embêter','C’est respecter le travail des autres.'],
+['Tu ne comprends pas ce qu’un adulte dit. Que fais-tu ?','Je pose une question','Je fais semblant de comprendre','Je ris','Poser des questions, c’est apprendre.']
+],[
+['Que veut dire « la paix » ?','Vivre ensemble sans violence','Un jeu vidéo','Un repas','La paix se construit par le respect.'],
+['Pourquoi accueille-t-on ceux qui fuient la guerre ?','Chacun a droit à la sécurité','Par obligation seulement','Pour rien','Accueillir est une valeur humaine.'],
+['Quelle langue faut-il parler pour être respecté ?','Toutes les langues méritent le respect','Une seule','Aucune','La diversité est une richesse.'],
+['Comment construire un monde plus juste ?','Par des gestes de respect chaque jour','En attendant','En se battant','Chacun peut changer les choses.'],
+['Après ces 15 niveaux, tu es devenu…','Un champion du respect !','Un joueur','Un robot','Bravo, continue à respecter tout le monde !']
+],[
+['Quelqu’un t’a aidé. Que fais-tu ?','Je le remercie sincèrement','Je ne dis rien','Je l’oublie','Dire merci donne de la joie.'],
+['Un petit geste gentil, c’est…','Offrir un sourire ou un coup de main','Faire un gros cadeau seulement','Une perte de temps','La gentillesse ne coûte rien.'],
+['Ta maîtresse a fait un beau cours. Que fais-tu ?','Je lui dis merci','Je pars sans un mot','Je critique','Un merci encourage.'],
+['Pourquoi remercie-t-on ceux qui nettoient l’école ?','Leur travail est utile à tous','Ils sont obligés','Ce n’est pas important','Tous les métiers méritent le respect.']
+],[
+['Un camarade parle une autre langue. Que fais-tu ?','J’essaie de communiquer avec des gestes et des sourires','Je me moque de lui','Je l’évite','Les différences enrichissent le groupe.'],
+['Que veut dire « inclure » quelqu’un ?','Lui faire une place dans le groupe','L’éloigner','Le critiquer','Chacun doit se sentir accepté.'],
+['Les garçons et les filles peuvent…','Jouer à tous les jeux','Jouer seulement à certains jeux','Ne pas se parler','Les jeux sont pour tout le monde.'],
+['Quelqu’un a un handicap. Que fais-tu ?','Je lui propose mon aide s’il en a besoin','Je le regarde bizarrement','Je ris','On demande avant d’aider.']
+],[
+['Tu as eu une mauvaise note. Que fais-tu ?','Je le dis à mes parents et je m’améliore','Je cache le cahier','Je change la note','L’honnêteté aide à progresser.'],
+['Un ami copie sur toi pendant un test. Que fais-tu ?','Je lui dis que ce n’est pas juste','Je le laisse faire','Je copie sur lui','Tricher, c’est tromper les autres.'],
+['Tu as promis de rendre un livre. Que fais-tu ?','Je le rends à la date prévue','Je l’oublie','Je dis que je l’ai perdu','Tenir parole crée la confiance.'],
+['Le vendeur te rend trop de monnaie. Que fais-tu ?','Je le lui dis','Je me tais','Je pars vite','Être honnête, même quand personne ne regarde.']
+],[
+['Un bon chef d’équipe…','Écoute tout le monde','Donne des ordres sans écouter','Fait tout seul','Un chef respecte son équipe.'],
+['Tu vois une personne perdue dans la rue. Que fais-tu ?','Je préviens un adulte pour l’aider','Je passe mon chemin','Je me moque','Aider, c’est un acte de courage.'],
+['Pourquoi donne-t-on l’exemple ?','Les autres nous imitent','Pour être remarqué','Pour avoir une médaille','Nos actes inspirent les autres.'],
+['Un projet de classe échoue. Que fais-tu ?','J’apprends de l’erreur et je recommence','Je blâme les autres','J’abandonne','Se tromper, c’est apprendre.']
+],[
+['Quelle est la base du respect ?','Traiter les autres comme on aimerait l’être','Gagner contre tous','Faire ce qu’on veut','La règle d’or du respect.'],
+['Respecter, c’est aussi…','Se respecter soi-même','Ne penser qu’à soi','Obéir sans réfléchir','Prendre soin de soi compte aussi.'],
+['Que faire face à une injustice ?','Agir calmement et demander de l’aide','Se taire','Se venger','On peut défendre ce qui est juste.'],
+['Tu es arrivé au niveau 20. Tu es…','Un vrai champion du respect !','Un robot','Un tricheur','Bravo, le respect, c’est pour toujours !']
+]];
+var T=[["Le respect, ça commence ici","30 questions pour savoir quoi faire, et quoi ne pas faire."],["Respecter les autres","10 questions sur l’écoute, le pardon et la confiance."],["Vivre ensemble","10 questions sur la nature, la sécurité et les voisins."],["Responsabilité et empathie","10 questions sur les émotions, le courage et Internet."],["Citoyen du monde","10 questions sur les droits, la solidarité et la liberté."],['Santé et bien-être','5 questions pour prendre soin de toi.'],['Travailler en équipe','5 questions pour réussir ensemble.'],['L’argent et le partage','5 questions sur l’argent et la générosité.'],['Science et nature','5 questions pour protéger le vivant.'],['Bien communiquer','5 questions sur les mots et l’écoute.'],['Citoyen en action','5 questions sur la vie en société.'],['Le monde numérique','5 questions pour être en sécurité en ligne.'],['Confiance en soi','5 questions pour croire en toi.'],['Vrai ou faux ?','5 questions pour garder l’esprit critique.'],['Un monde en paix','5 questions pour finir en beauté.'],['Gentillesse et merci','4 questions sur la gratitude.'],['Tous ensemble','4 questions sur l’inclusion.'],['Honnêteté','4 questions sur la vérité et la confiance.'],['Esprit de chef','4 questions sur l’exemple et l’entraide.'],['Champion du respect','4 questions pour finir en beauté.'],['Esprit critique','4 questions pour bien raisonner.'],['Climat et vivant','4 questions sur la planète.'],['Droits humains','4 questions sur la dignité.'],['Démocratie','4 questions sur la vie citoyenne.'],['Économie éthique','4 questions sur le juste échange.'],['Science et IA','4 questions sur le numérique.'],['Histoire et mémoire','4 questions sur le passé.'],['Résoudre les conflits','4 questions sur la paix.'],['Citoyen du monde','4 questions sur le monde.'],['Maître du respect','4 questions pour finir en beauté.'],['Vérifier l’info',''],['Vie marine',''],['Fair-play',''],['Esprit sain',''],['Mots gentils',''],['Héros du recyclage',''],['En sécurité en ligne',''],['Cultures du monde',''],['Droits des animaux',''],['Argent malin',''],['Héros d’équipe',''],['Espaces publics',''],['Courage',''],['Savoir écouter',''],['Égalité',''],['Manifester en paix',''],['Planète de demain',''],['Gratitude',''],['Choix sages',''],['Légende du respect','']];
+var TE=['Respect starts here','Respecting others','Living together','Responsibility and empathy','World citizen','Health and well-being','Teamwork','Money and sharing','Science and nature','Good communication','Citizen in action','The digital world','Self-confidence','True or false?','A world at peace','Kindness and thanks','Everyone belongs','Honesty','Leadership','Respect champion','Critical thinking','Climate and life','Human rights','Democracy','Ethical economy','Science and AI','History and memory','Solving conflicts','Global citizen','Master of Respect','Fact-checking','Ocean life','Fair play','Healthy mind','Kind words','Recycling heroes','Safe online','Many cultures','Animal rights','Smart money','Teamwork heroes','Public spaces','Courage','Listening skills','Equality','Peaceful protest','Future planet','Gratitude','Wise choices','Legend of Respect'];
+var best=[],maxU=1;
+try{var P=JSON.parse(localStorage.getItem('mrt')||'{}');maxU=P.u||1;best=P.b||[]}catch(e){}
+function save(){try{localStorage.setItem('mrt',JSON.stringify({u:maxU,b:best}))}catch(e){}}
+var lang='en';try{lang=localStorage.getItem('mrl')||'en'}catch(e){}
+var I={en:{load:['Master Roy is waking up…','Questions are coming…','Sorting the levels…','Almost ready!'],mapT:'Choose your level',go:'Start',back:'All levels',toMap:'Back to levels',lvl:'Level',of:'of',q:'Question',next:'Next',see:'See my result',good:['Great job!','Super!','Correct!','Well done!','Awesome!'],bad:'Oops, not quite!',win:'Great job, you did it!',all:'You finished everything!',lose:'You’ll do better next time!',need:'you need',nl:'Next level',rp:'Replay this level',rt:'Try again',play:'Play',sub:' questions to learn something new.'},fr:{load:['Master Roy se réveille…','Les questions arrivent…','On range les niveaux…','Presque prêt !'],mapT:'Choisis ton niveau',go:'Commencer',back:'Tous les niveaux',toMap:'Retour aux niveaux',lvl:'Niveau',of:'sur',q:'Question',next:'Suivant',see:'Voir mon résultat',good:['Bravo !','Super !','Exact !','Bien joué !','Génial !'],bad:'Oups, pas tout à fait !',win:'Bravo, tu as réussi !',all:'Bravo, tu as tout réussi !',lose:'Tu feras mieux la prochaine fois !',need:'il en faut',nl:'Niveau suivant',rp:'Rejouer ce niveau',rt:'Recommencer',play:'À jouer',sub:''}};
+var E=[];
+E[0]=[
+['Why should we brush our teeth in the morning?','To remove germs and have fresh breath','So our teeth grow bigger','To please the toothpaste','Germs multiply in the mouth overnight.'],
+['You get a gift. What do you say?','Thank you!','Nothing, I open it fast','Is that all?','We always thank people who please us.'],
+['Someone is speaking. What do you do?','I wait until they finish to speak','I speak louder than them','I run away','Listening is respecting others.'],
+['You want a friend’s toy. What do you do?','I ask them nicely to lend it','I snatch it from their hands','I hide it in my bag','It is theirs: we ask before taking.'],
+['You arrive at school in the morning. What do you say?','Good morning!','Nothing at all','Where is my seat?','Saying hello shows we are happy to see others.'],
+['Why wash our hands before eating?','To remove germs','So food gets colder','To play with water','Dirty hands can cause tummy aches.'],
+['You made a friend fall by accident. What do you do?','I say sorry and help them up','I act like nothing happened','I laugh loudly','Even by accident, we apologize and help.'],
+['Why don’t we shout in class?','So everyone can listen and work','Because it hurts the voice','Because the board is scared','Noise stops others from focusing.'],
+['What is the magic word when asking for something?','Please','Right now','Give it!','“Please” asks with kindness.'],
+['A friend is sad. What do you do?','I go to them and comfort them','I make fun of them','I ignore them','A kind word can do a lot of good.'],
+['You finished playing. What do you do?','I put my toys away','I leave them on the floor','I throw them under the bed','Tidying respects your home and others.'],
+['At the table, how do we eat?','Slowly, with our mouth closed','Mouth full while talking','Playing with the food','Eating neatly is nice for everyone.'],
+['A friend is very different from you. What do you do?','I respect them, everyone is different','I make fun of them','I never talk to them','Our differences make the world beautiful.'],
+['You find something that is not yours. What do you do?','I give it to an adult to return','I keep it','I throw it away','Someone is surely looking for it.'],
+['Why is telling the truth important?','So others can trust us','So others get jealous','It is not important','When we lie, nobody believes us.'],
+['There is a line for the slide. What do you do?','I wait behind and take my turn','I go in front of everyone','I push others','Taking turns is fair to all.'],
+['Why shouldn’t we interrupt people?','It is rude, everyone should finish','It makes you cough','It is forbidden for kids','Interrupting says the other does not matter.'],
+['You lose a game. What do you do?','I congratulate the winner','I flip the game over','I sulk all day','Losing well is also winning.'],
+['Why should we never hit others?','It hurts and injures','It makes dust','It is tiring','We solve problems with words, not hands.'],
+['Your sister’s bedroom door is closed. What do you do?','I knock and wait for her answer','I walk straight in','I shout through the door','Everyone needs their own space.'],
+['Mom is making dinner. How can you help?','I set the table','I run around','I watch TV','Helping at home says thank you with actions.'],
+['On the bus, an elderly person is standing. What do you do?','I offer them my seat','I pretend to sleep','I take their seat too','Standing is tiring for older people.'],
+['Why don’t we throw paper on the ground?','To keep nature and streets clean','So the bins get jealous','Because paper is heavy','Respecting nature is respecting everyone.'],
+['Why should we go to bed at a good time?','So the body rests and grows well','So the moon is happy','To dream of monsters','Sleep gives energy for tomorrow.'],
+['Kids are making fun of a friend. What do you do?','I say stop and stand with my friend','I laugh with them','I watch and say nothing','Defending someone is real courage.'],
+['You did something wrong. What do you do?','I say so and fix it if I can','I lie to avoid punishment','I say the cat did it','Everyone makes mistakes, owning them matters.'],
+['You leave your friends to go home. What do you say?','Goodbye, see you soon!','Nothing, I leave','Finally I’m leaving!','A little goodbye leaves a nice last impression.'],
+['Why do we speak softly in the library?','So we don’t disturb those reading','Because books sleep','Because of ghosts','Calm helps everyone read well.'],
+['A new student arrives in your class. What do you do?','I invite them to play with us','I don’t talk to them','I make fun of their accent','Being welcomed gives confidence.'],
+['Why is it important to respect everyone?','Everyone deserves kindness','It is the rule of the game','To get candy','Respect makes life sweeter for all.']
+];
+E[15]=[
+['Someone helped you. What do you do?','I thank them sincerely','I say nothing','I forget about it','Saying thank you brings joy.'],
+['A small kind act is…','Giving a smile or a helping hand','Only giving big gifts','A waste of time','Kindness costs nothing.'],
+['Your teacher gave a great lesson. What do you do?','I say thank you','I leave without a word','I criticize','A thank you is encouraging.'],
+['Why do we thank the people who clean the school?','Their work helps everyone','They have to','It is not important','Every job deserves respect.']
+];
+E[16]=[
+['A classmate speaks another language. What do you do?','I try to talk with gestures and smiles','I make fun of them','I avoid them','Differences make the group richer.'],
+['What does it mean to include someone?','To make room for them in the group','To push them away','To criticize them','Everyone should feel accepted.'],
+['Boys and girls can…','Play any game','Only play certain games','Never talk to each other','Games are for everyone.'],
+['Someone has a disability. What do you do?','I offer help if they need it','I stare at them','I laugh','We ask before we help.']
+];
+E[17]=[
+['You got a bad grade. What do you do?','I tell my parents and try to improve','I hide the notebook','I change the grade','Honesty helps you progress.'],
+['A friend copies from you during a test. What do you do?','I tell them it is not fair','I let them','I copy from them','Cheating is tricking others.'],
+['You promised to return a book. What do you do?','I return it on time','I forget about it','I say I lost it','Keeping your word builds trust.'],
+['The cashier gives you too much change. What do you do?','I tell them','I stay quiet','I leave quickly','Be honest, even when nobody is watching.']
+];
+E[18]=[
+['A good team leader…','Listens to everyone','Gives orders without listening','Does everything alone','A leader respects the team.'],
+['You see someone lost in the street. What do you do?','I tell an adult so they can help','I walk past','I laugh','Helping is an act of courage.'],
+['Why do we set an example?','Others copy what we do','To be noticed','To get a medal','Our actions inspire others.'],
+['A class project fails. What do you do?','I learn from the mistake and try again','I blame others','I give up','Making mistakes is learning.']
+];
+E[19]=[
+['What is the basis of respect?','Treating others the way you want to be treated','Winning against everyone','Doing whatever you want','The golden rule of respect.'],
+['Respect also means…','Respecting yourself','Only thinking of yourself','Obeying without thinking','Taking care of yourself matters too.'],
+['What do you do about an injustice?','Act calmly and ask for help','Stay silent','Take revenge','We can stand up for what is right.'],
+['You reached level 20. You are…','A true champion of respect!','A robot','A cheater','Well done, respect is forever!']
+];
+E[20]=[
+['Two sources give different facts. What is the best step?','Compare them with a reliable third source','Believe the one I like','Believe the most shared one','Reliable facts can be checked in several places.'],
+['What is a bias?','A tendency to favor one side without good reasons','A kind of calculator','A type of video game','Knowing our biases helps us judge fairly.'],
+['“Everyone says it, so it is true.” Is this good reasoning?','No, many people can be wrong','Yes, always','Only on weekends','Popularity is not proof.'],
+['Which one is a fact?','Water boils at 100 °C at sea level','Blue is the best color','Dogs are better than cats','A fact can be tested; an opinion cannot.']
+];
+E[21]=[
+['What makes the greenhouse effect stronger?','Gases from burning fuels','Planting trees','Riding bicycles','Too many gases trap heat on Earth.'],
+['Which energy is renewable?','Solar and wind','Coal','Oil','Renewable energy does not run out.'],
+['Why do melting glaciers matter?','They raise sea levels','They make every ocean colder','They stop rain','Coasts and animals are at risk.'],
+['What does “biodiversity” mean?','The variety of living things on Earth','A kind of plastic','A type of fuel','Each species helps keep nature balanced.']
+];
+E[22]=[
+['What is the Universal Declaration of Human Rights?','A text saying all people have equal rights','A school timetable','A sports rulebook','The United Nations adopted it in 1948.'],
+['What does freedom of expression include?','Sharing ideas while respecting others','Insulting anyone','Hiding the truth','Free speech has limits when it harms others.'],
+['What does “discrimination” mean?','Treating people unfairly because of who they are','Choosing a snack','Learning a language','It is unfair and against the law.'],
+['Every child has the right to…','Education, health and protection','Never go to school','Work all day','These are rights of the child.']
+];
+E[23]=[
+['What is a democracy?','People choose their leaders by voting','One person decides everything','Nobody makes rules','Citizens share power.'],
+['Why do we need independent courts?','To judge fairly under the law','To obey the strongest','To make laws only for some','Justice must be equal for all.'],
+['What is a free press for?','Informing citizens about what happens','Hiding problems','Selling toys','It helps people hold power to account.'],
+['You disagree with a law. What can you do peacefully?','Vote, discuss and sign petitions','Break it','Ignore everyone','Peaceful action helps societies improve.']
+];
+E[24]=[
+['What is fair trade?','Paying producers a fair price for their work','Selling very expensive things','Trading only toys','It helps farmers earn a decent living.'],
+['Why is child labor wrong?','It takes away children’s right to learn and play','It is cheaper','It is tradition','Children belong in school.'],
+['What is “consuming responsibly”?','Buying what we need and thinking of the planet','Buying everything on sale','Throwing things away fast','Our choices have an impact.'],
+['What is a donation?','Giving money or goods freely to help others','A loan with interest','A tax','Generosity strengthens communities.']
+];
+E[25]=[
+['What does artificial intelligence do?','Learns from data to help with tasks','Thinks exactly like a human','Never makes mistakes','AI can be wrong, so we double-check.'],
+['Why protect our personal data?','So others cannot misuse our private information','Because it is heavy','To save storage','Privacy is a right.'],
+['What is cyberbullying?','Hurting someone repeatedly online','Playing online games','Writing a school report','Tell a trusted adult and keep evidence.'],
+['Which is a step of the scientific method?','Testing an idea with an experiment','Guessing without checking','Copying a friend','Science asks questions and tests answers.']
+];
+E[26]=[
+['Why do we study history?','To learn from the past and avoid repeating mistakes','To memorize dates only','To be scared','Memory helps build a better future.'],
+['Why do we remember victims of wars and injustice?','To honor them and prevent it from happening again','To feel guilty','To make others sad','Remembering keeps respect alive.'],
+['What is a stereotype?','A simplified idea about a whole group','A scientific proof','A kind of music','Stereotypes can lead to unfair treatment.'],
+['What helps people from different cultures understand each other?','Curiosity, listening and respect','Ignoring differences','Laughing at customs','Dialogue builds bridges.']
+];
+E[27]=[
+['What is mediation?','A neutral person helps two sides find a solution','Winning an argument','Ignoring a conflict','It settles conflicts fairly.'],
+['What is “active empathy”?','Understanding feelings and helping','Feeling sad only','Telling people what to do','Empathy plus action changes lives.'],
+['How can you disagree respectfully?','Explain my view and listen to theirs','Interrupt and shout','Walk away silently','Respect does not need agreement.'],
+['What is resilience?','Recovering and growing after difficulties','Never being sad','Avoiding all problems','It can be learned step by step.']
+];
+E[28]=[
+['What are the UN Sustainable Development Goals?','Global goals for peace, health and a clean planet','A game','A school diary','Countries aim to reach them by 2030.'],
+['Why is clean water so important?','It is essential for health and life','It is only for washing cars','It makes food sweeter','Millions of people still lack it.'],
+['What does volunteering mean?','Giving time to help others without pay','Working for money','Skipping school','Volunteers build stronger communities.'],
+['What does “global citizen” mean?','Caring about people and the planet everywhere','Visiting many countries','Owning a passport','Our actions connect us all.']
+];
+E[29]=[
+['What is the highest form of respect?','Valuing every person, the planet and the truth','Being popular','Winning arguments','Respect needs values and action.'],
+['To change the world, you can start by…','Small daily acts of respect','Waiting for others','Complaining','Great changes begin with small steps.'],
+['What is integrity?','Doing right even when nobody sees','Being clever','Being loud','Integrity builds trust.'],
+['You finished all 30 levels. You are…','A true Master of Respect!','A beginner','A spectator','Congratulations from Master Roy!']
+];
+for(var z=20;z<30;z++)S[z]=E[z];
+E[30]=[['What is a reliable source?','An expert or official site that shows evidence','A rumor from a friend','A random comment','Evidence makes information trustworthy.'],['Why check the date of an article?','Old news can be out of date','Dates are decoration','Newer is always false','Facts can change over time.'],['A photo looks shocking online. What first?','Check where it came from','Share it fast','Believe it','Images can be edited or reused.']];
+E[31]=[['Why are coral reefs important?','They shelter many sea animals','They make waves','They are only decorations','Reefs support ocean life.'],['What harms ocean animals most?','Plastic and pollution','Clean water','Sunlight','We can reduce plastic waste.'],['What is overfishing?','Catching fish faster than they can reproduce','Fishing for fun','Feeding fish','Fish need time to recover.']];
+E[32]=[['What is fair play?','Following the rules and respecting opponents','Winning at any cost','Hiding mistakes','Fair play makes games fun for all.'],['The referee makes a call against you. What do you do?','Accept it calmly','Shout at them','Quit the game','Referees keep games fair.'],['A teammate is injured. What do you do?','Stop and help','Keep playing','Laugh','Health matters more than the score.']];
+E[33]=[['What helps you feel calm when stressed?','Slow breathing and talking to someone','Keeping everything inside','Shouting','Sharing worries lightens them.'],['Why is sleep important for the brain?','It helps memory and mood','It wastes time','It only makes you taller','Rested minds learn better.'],['It is OK to…','Ask for help when you feel sad','Hide every feeling','Hurt others','Everyone needs support sometimes.']];
+E[34]=[['Which words are kind?','“Thank you” and “Can I help?”','“You’re useless”','“Go away”','Words can lift people up.'],['A friend’s drawing is not perfect. You say…','“I like the colors you used”','“That is ugly”','Nothing, and laugh','Kind feedback helps.'],['Why avoid hurtful nicknames?','They can make someone feel bad','They are always funny','They are forbidden by gravity','Respect names and feelings.']];
+E[35]=[['Where does a glass bottle go?','In the glass recycling bin','In the paper bin','In the sea','Glass can be recycled many times.'],['What does “reduce, reuse, recycle” mean?','Waste less, reuse items, then recycle','Buy more','Burn trash','Reducing comes first.'],['What can you do with an old jar?','Reuse it for storage','Throw it in nature','Break it','Reuse saves resources.']];
+E[36]=[['Is it safe to share your password with friends?','No, keep it private','Yes, always','Only on Fridays','Passwords protect your account.'],['A pop-up says “You won! Click now!” What do you do?','Ignore it and tell an adult','Click quickly','Enter my address','It may be a scam.'],['Before downloading an app, what should you do?','Ask an adult','Download everything','Share it with strangers','Some apps are unsafe.']];
+E[37]=[['Why do people celebrate different festivals?','Cultures have different traditions','Because of mistakes','To confuse others','Traditions are a shared heritage.'],['You taste food from another culture. You say…','“Interesting, tell me about it”','“Yuck, that’s weird”','Nothing, and leave','Curiosity is respect.'],['How can you learn about another culture?','Read, listen and ask respectfully','Laugh at it','Ignore it','Learning builds understanding.']];
+E[38]=[['Why should animals not be treated cruelly?','They feel pain and fear','They are toys','They do not matter','Animals deserve care.'],['Who is a responsible pet owner?','Someone who feeds, exercises and cares for the pet','Someone who forgets it','Someone who leaves it outside always','Pets depend on us.'],['Why protect endangered species?','To keep nature balanced','To keep them as trophies','No reason','Extinction cannot be undone.']];
+E[39]=[['What is a budget?','A plan for spending and saving','A kind of toy','A type of tax','Planning avoids waste.'],['You want a toy but lack money. What is smart?','Save a little each week','Borrow without telling','Take it','Patience and saving work.'],['What does “need vs want” mean?','Needs are essential, wants are extras','They are the same','Wants come first','Think before you buy.']];
+E[40]=[['Why do teams need different skills?','Each person adds something useful','Everyone should be identical','Only one skill matters','Diversity makes teams strong.'],['A teammate is shy. What do you do?','Invite them to share ideas','Ignore them','Speak for them','Everyone’s voice counts.'],['After a team failure, what is best?','Discuss what to improve','Blame one person','Give up','Learning together builds trust.']];
+E[41]=[['What should you do in a park?','Keep it clean and respect others','Leave litter','Break benches','Public spaces belong to everyone.'],['Why do we keep quiet in a hospital?','Patients need rest','It is a game rule','Nurses are asleep','Calm helps healing.'],['Why don’t we write on public walls?','It damages shared property','It is art everywhere','Walls like it','Others must clean it.']];
+E[42]=[['What is moral courage?','Doing right even when it is hard','Not feeling fear','Being the loudest','Courage means acting despite fear.'],['You see cheating happen. What can you do?','Tell a trusted adult','Join in','Laugh','Honesty protects fairness.'],['Is saying “I was wrong” brave?','Yes, it takes courage','No, it is weak','Only for kids','Admitting mistakes helps us grow.']];
+E[43]=[['What is a good listening habit?','Look at the speaker and do not interrupt','Check your phone','Only plan your answer','Listening shows respect.'],['You did not understand. What can you do?','Ask them to repeat or explain','Pretend you understood','Walk away','Questions help understanding.'],['What does “paraphrasing” mean?','Saying it back in your own words','Copying exactly','Ignoring it','It checks you understood.']];
+E[44]=[['What is equity?','Giving people what they need to be treated fairly','Giving everyone the same thing','Giving to friends only','Fairness sometimes needs different help.'],['Why do ramps matter?','They allow wheelchair access','They are for skateboards only','They are decoration','Access is a right.'],['Equal pay means…','Same pay for the same work','Pay by gender','No pay','Fair work deserves fair pay.']];
+E[45]=[['What is a peaceful protest?','A calm gathering to share a cause','A fight','A riot','Peaceful voices can change laws.'],['What makes a protest respectful?','No violence and respect for others','Breaking things','Insulting people','Rights come with responsibility.'],['Which is a peaceful action?','Writing a letter to leaders','Throwing stones','Blocking ambulances','Dialogue is powerful.']];
+E[46]=[['What is sustainability?','Meeting today’s needs without harming tomorrow','Using everything now','Wasting energy','Future generations matter.'],['Which transport pollutes least?','Walking or cycling','Big old cars','Planes for short trips','Active travel helps the air.'],['Why plant trees?','They clean the air and shelter animals','They only block the sun','They are fashion','Trees help the planet.']];
+E[47]=[['Why keep a gratitude journal?','It helps notice good things','It replaces homework','It is required by law','Gratitude boosts happiness.'],['Who can you thank today?','Family, teachers and helpers','No one','Only celebrities','Thanks builds bonds.'],['How can you show thanks without words?','Help or give a smile','Ignore them','Take more','Actions show appreciation.']];
+E[48]=[['Before a big decision, you should…','Think about the consequences','Pick randomly','Follow the crowd','Wise choices consider others.'],['A friend pressures you to do something wrong. You…','Say no and walk away','Do it to fit in','Stay silent','Peer pressure can be resisted.'],['Why ask for advice?','Others can see what we miss','To avoid thinking','To blame them','Advice widens our view.']];
+E[49]=[['What makes a Legend of Respect?','Kindness, honesty and courage every day','Being famous','Winning everything','Respect is a habit.'],['Respect for the planet means…','Protecting it for everyone','Using it up','Ignoring pollution','Earth is our shared home.'],['You completed all 50 levels. You are…','A Legend of Respect!','A beginner','A spectator','Congratulations from Master Roy!']];
+for(var z=30;z<50;z++)S[z]=E[z];
+function gq(){var r=Q[order[i]],a=lang=='en'&&E[r[0]]?E[r[0]]:S[r[0]];return a[r[1]]}
+var AC=null,muted=false;try{muted=localStorage.getItem('mrs')==='0'}catch(e){}
+function au(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended'){try{AC.resume()}catch(e){}}return AC}
+function tone(f,t,d,ty,v,sl){var a=au();if(!a||muted||a.state!=='running')return;try{var o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t;o.type=ty||'sine';o.frequency.setValueAtTime(f,s);if(sl)o.frequency.exponentialRampToValueAtTime(sl,s+d);g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(v||.2,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g);g.connect(a.destination);o.start(s);o.stop(s+d+.05)}catch(e){}}
+var SND={tap:function(){tone(660,0,.07,'triangle',.14)},
+ok:function(){[523,659,784,1047].forEach(function(f,k){tone(f,k*.09,.2,'triangle',.22);tone(f*2,k*.09,.12,'sine',.06)})},
+no:function(){tone(230,0,.28,'sawtooth',.14,110);tone(170,.15,.32,'sawtooth',.12,80)},
+win:function(){[523,659,784,659,784,1047,1319].forEach(function(f,k){tone(f,k*.11,.24,'square',.09);tone(f*2,k*.11,.24,'triangle',.08)})},
+lose:function(){[392,349,330,262].forEach(function(f,k){tone(f,k*.2,.34,'triangle',.2)})}};
+document.addEventListener('pointerdown',function(){au()});
+document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('button'):null;if(b&&!b.disabled&&b.id!=='snd'&&!b.classList.contains('opt'))SND.tap()});
+function applyLang(){var s=I[lang];document.documentElement.lang=lang;
+$('ldT').textContent=s.load[0];$('mapT').textContent=s.mapT;$('go').textContent=s.go;$('hBack').textContent=s.back;$('toMap').textContent=s.toMap;$('nx').textContent=s.next;
+document.querySelectorAll('.lang button').forEach(function(b){b.className=b.dataset.l===lang?'on':''});
+if(!$('map').hidden)goMap();if(!$('home').hidden)home()}
+var win,st=0;
+var $=function(id){return document.getElementById(id)},mr=$("mr"),wrap=$("wrap");
+var order,i,score,locked,L=["A","B","C"],good=["Bravo !","Super !","Exact !","Bien joué !","Génial !"];
+function shuffle(a){a=a.slice();for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[j];a[j]=t}return a}
+function mood(m){mr.classList.remove("happy","angry");void mr.getBoundingClientRect();if(m)mr.classList.add(m)}
+function show(id){["load","map","home","game","end"].forEach(function(s){$(s).hidden=s!==id});$(id).style.animation="none";void $(id).offsetWidth;$(id).style.animation=""}
+function start(){var own=shuffle(S[st].map(function(_,k){return [st,k]})).slice(0,10),ex=[];for(var l=0;l<st;l++)for(var k=0;k<S[l].length;k++)ex.push([l,k]);Q=own.concat(shuffle(ex).slice(0,10-own.length));order=shuffle(Q.map(function(_,k){return k}));i=0;score=0;mr.classList.remove("idle");wrap.classList.add("play");mood(null);show("game");render()}
+function render(){
+var q=gq();locked=false;mood(null);$("fb").hidden=true;
+$("cnt").textContent=I[lang].lvl+" "+(st+1)+" · "+I[lang].q+" "+(i+1)+" "+I[lang].of+" "+Q.length;
+$("prog").style.width=(i/Q.length*100)+"%";$("sc").textContent=score;$("q").textContent=q[0];
+var box=$("ans");box.innerHTML="";
+shuffle([1,2,3]).forEach(function(n,p){
+var b=document.createElement("button");b.className="opt";b.dataset.ok=n===1?"1":"";
+b.innerHTML="<b>"+L[p]+"</b><span></span>";b.lastChild.textContent=q[n];
+b.onclick=function(){pick(b)};box.appendChild(b)})}
+function pick(b){
+if(locked)return;locked=true;var q=gq(),ok=!!b.dataset.ok;
+document.querySelectorAll(".opt").forEach(function(o){o.disabled=true;if(o.dataset.ok)o.classList.add("ok");else if(o===b)o.classList.add("no");else o.classList.add("dim")});
+if(ok){score++;$("sc").textContent=score}
+mood(ok?"happy":"angry");ok?SND.ok():SND.no();
+var f=$("fb");f.className=ok?"ok":"no";f.hidden=false;
+$("fbT").textContent=ok?I[lang].good[Math.floor(Math.random()*5)]:I[lang].bad;
+$("fbP").textContent=q[4];
+$("nx").textContent=i===Q.length-1?I[lang].see:I[lang].next;
+$("nx").focus({preventScroll:true});f.scrollIntoView({behavior:"smooth",block:"nearest"})}
+function next(){i++;if(i<Q.length){render();window.scrollTo(0,0)}else finish()}
+function finish(){
+var need=Math.ceil(Q.length*.7),pass=score>=need,last=st===S.length-1,n=!pass?0:score>=Q.length*.9?3:2;
+win=pass;if(pass){best[st]=Math.max(best[st]||0,n);maxU=Math.max(maxU,Math.min(st+2,S.length));save()}
+$("eT").textContent=pass?(last?I[lang].all:I[lang].win):I[lang].lose;
+$("eT").style.color=pass?"var(--okD)":"var(--noD)";
+$("stars").innerHTML=[0,1,2].map(function(k){return k<n?"⭐":"<s>⭐</s>"}).join("");
+$("eS").textContent=score+" "+I[lang].of+" "+Q.length+(pass?"":" · "+I[lang].need+" "+need);
+$("again").textContent=pass?(last?I[lang].rp:I[lang].nl):I[lang].rt;
+show("end");setTimeout(function(){pass?SND.win():SND.lose()},250);window.scrollTo(0,0)}
+function home(){
+Q=S[st];wrap.classList.remove("play");mood(null);mr.classList.add("idle");
+mr.style.setProperty("--mc","hsl("+((st*137.5+45)%360)+",82%,60%)");var s=I[lang];$("hTag").textContent=s.lvl+" "+(st+1)+" "+s.of+" "+S.length;$("hT").textContent=lang=="fr"?T[st][0]:TE[st];$("hS").textContent=10+(lang=="fr"?" questions pour apprendre du nouveau.":s.sub);$("go").textContent=s.go;
+show("home");window.scrollTo(0,0)}
+function again(){if(win&&st<S.length-1)st++;home()}
+function goMap(){wrap.classList.add("play");mood(null);mr.classList.add("idle");
+var g=$("grid"),off=[0,46,70,46,0,-46,-70,-46],cur=null;g.innerHTML="";
+S.forEach(function(_,k){var lock=k>=maxU,d=best[k]>0,r=document.createElement("div"),b=document.createElement("button");
+r.className="row";r.style.translate=off[k%8]+"px 0";
+b.className="nd"+(d?" done":"");b.disabled=lock;b.innerHTML="<span>"+(lock?"🔒":(k+1))+"</span>";b.setAttribute("aria-label",I[lang].lvl+" "+(k+1));
+b.onclick=function(){st=k;home()};
+var c=document.createElement("small");c.textContent=lock?"":d?"⭐".repeat(best[k]):I[lang].play;
+r.appendChild(b);r.appendChild(c);g.appendChild(r);if(!lock&&!d&&!cur)cur=r});
+show("map");(cur||g.lastChild).scrollIntoView({block:"center"});window.scrollTo(0,0)}
+$("go").onclick=start;$("nx").onclick=next;$("again").onclick=again;$("hBack").onclick=goMap;$("toMap").onclick=goMap;
+$("snd").textContent=muted?"🔇":"🔊";$("snd").onclick=function(){muted=!muted;try{localStorage.setItem("mrs",muted?"0":"1")}catch(e){}$("snd").textContent=muted?"🔇":"🔊";if(!muted){au();setTimeout(SND.tap,80)}};
+applyLang();document.querySelectorAll(".lang button").forEach(function(b){b.onclick=function(){lang=b.dataset.l;try{localStorage.setItem("mrl",lang)}catch(e){}applyLang()}});
+(function(){var t=I[lang].load,k=0,iv=setInterval(function(){k=Math.min(k+1,3);$("ldT").textContent=t[k]},1500);
+setTimeout(function(){clearInterval(iv);goMap()},6000)})();
+</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})</script>
+</body>
+</html>
